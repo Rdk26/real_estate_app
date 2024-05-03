@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/firebase_options.dart';
+import 'package:real_estate_app/pages/login.dart';
+import 'package:real_estate_app/pages/register.dart';
 import 'pages/root.dart';
 import 'theme/color.dart';
 
@@ -19,12 +21,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Real Estate App',
-      theme: ThemeData(
-        primaryColor: AppColor.primary,
-      ),
-      home: const RootApp(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Real Estate App',
+        theme: ThemeData(
+          primaryColor: AppColor.primary,
+        ),
+        routes: {
+          // '/': (context) => const StartScreen(),
+          '/': (context) => LoginScreen(),
+          '/register': (context) => RegisterScreen(),
+          // '/forgetpassword': (context) => const ForgetPasswordScreen(),
+          '/home': (context) => const RootApp(),
+        });
   }
 }

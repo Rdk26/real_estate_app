@@ -11,7 +11,7 @@ import 'package:real_estate_app/widgets/recent_item.dart';
 import 'package:real_estate_app/widgets/recommend_item.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  "Sangvaleap",
+                  "Melvin Tivane",
                   style: TextStyle(
                     color: Colors.black87,
                     fontSize: 17,
@@ -93,11 +93,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Text(
                   "Popular",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,8 +168,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
           Expanded(
@@ -178,13 +178,13 @@ class _HomePageState extends State<HomePage> {
               prefix: Icon(Icons.search, color: Colors.grey),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 10,
           ),
           IconBox(
-            child: Icon(Icons.filter_list_rounded, color: Colors.white),
             bgColor: AppColor.secondary,
             radius: 10,
+            child: Icon(Icons.filter_list_rounded, color: Colors.white),
           )
         ],
       ),
@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
     );
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(bottom: 5, left: 15),
+      padding: const EdgeInsets.only(bottom: 5, left: 15),
       child: Row(children: lists),
     );
   }
@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(bottom: 5, left: 15),
+      padding: const EdgeInsets.only(bottom: 5, left: 15),
       child: Row(children: lists),
     );
   }
@@ -254,7 +254,7 @@ class _HomePageState extends State<HomePage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(bottom: 5, left: 15),
+      padding: const EdgeInsets.only(bottom: 5, left: 15),
       child: Row(children: lists),
     );
   }
