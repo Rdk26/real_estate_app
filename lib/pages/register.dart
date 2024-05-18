@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // final TextEditingController nameController = TextEditingController();
+  // final TextEditingController lastnameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  RegisterScreen({super.key});
 
   Future<void> registerUser(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
@@ -13,6 +17,8 @@ class RegisterScreen extends StatelessWidget {
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
+          // name: nameController.text,
+          // lastname: lastnameController.text,
         );
         // Navigate to another screen after registration
       } catch (e) {
@@ -38,6 +44,26 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // TextFormField(
+              //   controller: nameController,
+              //   decoration: InputDecoration(labelText: 'Name'),
+              //   validator: (value) {
+              //     if (value!.isEmpty) {
+              //       return 'Please enter your name';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              // TextFormField(
+              //   controller: lastnameController,
+              //   decoration: InputDecoration(labelText: 'Lastname'),
+              //   validator: (value) {
+              //     if (value!.isEmpty) {
+              //       return 'Please enter your lastname';
+              //     }
+              //     return null;
+              //   },
+              // ),
               TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(labelText: 'Email'),
@@ -62,6 +88,13 @@ class RegisterScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => registerUser(context),
                 child: Text('Register'),
+              ),
+              SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text('Já tem uma conta? Clique aqui para fazer login'),
               ),
             ],
           ),
