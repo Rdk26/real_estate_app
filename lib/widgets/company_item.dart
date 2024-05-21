@@ -3,15 +3,15 @@ import 'package:real_estate_app/theme/color.dart';
 
 class CompanyItem extends StatelessWidget {
   const CompanyItem({
-    Key? key,
+    super.key,
     required this.data,
     this.bgColor = Colors.white,
     this.color = AppColor.primary,
     this.selected = false,
     this.onTap,
-  }) : super(key: key);
+  });
 
-  final data;
+  final Map<String, dynamic> data;
   final Color bgColor;
   final Color color;
   final bool selected;
@@ -24,8 +24,8 @@ class CompanyItem extends StatelessWidget {
       child: Container(
         width: 110,
         height: 110,
-        margin: EdgeInsets.only(right: 15),
-        padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+        margin: const EdgeInsets.only(right: 15),
+        padding: const EdgeInsets.fromLTRB(5, 10, 5, 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -34,7 +34,7 @@ class CompanyItem extends StatelessWidget {
               color: AppColor.shadowColor.withOpacity(0.1),
               spreadRadius: .5,
               blurRadius: 1,
-              offset: Offset(0, 1), // changes position of shadow
+              offset: const Offset(0, 1), // changes position of shadow
             ),
           ],
         ),
@@ -42,7 +42,7 @@ class CompanyItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(7),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: color.withOpacity(.3),
@@ -55,7 +55,7 @@ class CompanyItem extends StatelessWidget {
             Text(
               data["name"],
               maxLines: 1,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
               height: 5,
@@ -63,7 +63,7 @@ class CompanyItem extends StatelessWidget {
             Expanded(
               child: Text(
                 data["type"],
-                style: TextStyle(fontSize: 12, color: AppColor.darker),
+                style: const TextStyle(fontSize: 12, color: AppColor.darker),
               ),
             ),
             Visibility(
@@ -71,7 +71,7 @@ class CompanyItem extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 height: 2,
-                decoration: BoxDecoration(color: AppColor.primary),
+                decoration: const BoxDecoration(color: AppColor.primary),
               ),
             ),
           ],

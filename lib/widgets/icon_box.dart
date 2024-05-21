@@ -3,13 +3,13 @@ import 'package:real_estate_app/theme/color.dart';
 
 class IconBox extends StatelessWidget {
   const IconBox({
-    Key? key,
+    super.key,
     required this.child,
     this.bgColor,
     this.onTap,
     this.borderColor = Colors.transparent,
     this.radius = 50,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final Color borderColor;
@@ -22,7 +22,7 @@ class IconBox extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(radius),
@@ -32,7 +32,7 @@ class IconBox extends StatelessWidget {
               color: AppColor.shadowColor.withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 1,
-              offset: Offset(0, 1), // changes position of shadow
+              offset: const Offset(0, 1), // changes position of shadow
             ),
           ],
         ),

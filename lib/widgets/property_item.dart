@@ -1,51 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/theme/color.dart';
-
+import 'package:real_estate_app/pages/property_details_page.dart';
 import 'custom_image.dart';
 import 'icon_box.dart';
 
 class PropertyItem extends StatelessWidget {
-  const PropertyItem({Key? key, required this.data}) : super(key: key);
+  const PropertyItem({super.key, required this.data});
 
-  final data;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 240,
-      margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.shadowColor.withOpacity(0.1),
-            spreadRadius: .5,
-            blurRadius: 1,
-            offset: Offset(0, 1), // changes position of shadow
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PropertyDetailsPage(data: data),
           ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          CustomImage(
-            data["image"],
-            width: double.infinity,
-            height: 150,
-            radius: 25,
-          ),
-          Positioned(
-            right: 20,
-            top: 130,
-            child: _buildFavorite(),
-          ),
-          Positioned(
-            left: 15,
-            top: 160,
-            child: _buildInfo(),
-          ),
-        ],
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 240,
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.shadowColor.withOpacity(0.1),
+              spreadRadius: .5,
+              blurRadius: 1,
+              offset: const Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            CustomImage(
+              data["image"],
+              width: double.infinity,
+              height: 150,
+              radius: 25,
+            ),
+            Positioned(
+              right: 20,
+              top: 130,
+              child: _buildFavorite(),
+            ),
+            Positioned(
+              left: 15,
+              top: 160,
+              child: _buildInfo(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -69,14 +79,14 @@ class PropertyItem extends StatelessWidget {
           data["name"],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(
           height: 5,
         ),
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.place_outlined,
               color: AppColor.darker,
               size: 13,
@@ -86,7 +96,7 @@ class PropertyItem extends StatelessWidget {
             ),
             Text(
               data["location"],
-              style: TextStyle(fontSize: 13, color: AppColor.darker),
+              style: const TextStyle(fontSize: 13, color: AppColor.darker),
             ),
           ],
         ),
@@ -95,7 +105,7 @@ class PropertyItem extends StatelessWidget {
         ),
         Text(
           data["price"],
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 15,
             color: AppColor.primary,
             fontWeight: FontWeight.w500,

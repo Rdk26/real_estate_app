@@ -26,10 +26,10 @@ class FormContainerWidget extends StatefulWidget {
       this.inputType});
 
   @override
-  _FormContainerWidgetState createState() => new _FormContainerWidgetState();
+  FormContainerWidgetState createState() => FormContainerWidgetState();
 }
 
-class _FormContainerWidgetState extends State<FormContainerWidget> {
+class FormContainerWidgetState extends State<FormContainerWidget> {
   bool _obscureText = true;
 
   @override
@@ -66,7 +66,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
                     _obscureText ? Icons.visibility_off : Icons.visibility,
                     color: _obscureText == false ? Colors.blue : Colors.grey,
                   )
-                : const Text(""),
+                : const SizedBox.shrink(),
           ),
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:real_estate_app/features/user_auth/user_auth_implementation/firebase_auth_services.dart';
-import 'package:real_estate_app/features/user_auth/presentation/pages/login_page.dart';
-import 'package:real_estate_app/features/user_auth/presentation/widgets/form_container_widget.dart';
 import 'package:real_estate_app/global/common/toast.dart';
+import 'package:real_estate_app/features/user_auth/user_auth_implementation/firebase_auth_services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -14,10 +14,11 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool isSigningUp = false;
 
@@ -32,99 +33,149 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("SignUp"),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 50),
+            const Text(
+              'Crie sua conta', 
+              style: TextStyle(
+               color: Color.fromARGB(255, 18, 90, 158),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(
-                height: 30,
+            ),
+            const SizedBox(height: 1),
+            const Text(
+              'Por favor preencha os dados abaixo para criar uma conta',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
-              FormContainerWidget(
-                controller: _usernameController,
-                hintText: "Username",
-                isPasswordField: false,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              FormContainerWidget(
-                controller: _emailController,
-                hintText: "Email",
-                isPasswordField: false,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              FormContainerWidget(
-                controller: _passwordController,
-                hintText: "Password",
-                isPasswordField: true,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _signUp();
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                      child: isSigningUp
-                          ? CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            )),
+              textAlign: TextAlign.left,
+            ),
+            const SizedBox(height: 60),
+            TextFormField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person_outline),
+                labelText: 'Nome',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
-              SizedBox(
-                height: 20,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.email_outlined),
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Already have an account?"),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            (route) => false);
-                      },
-                      child: Text(
-                        "Login",
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.lock_outline),
+                labelText: 'Senha',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _signUp,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: isSigningUp
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Registar', style: TextStyle(color: Color.fromARGB(255, 18, 90, 158), fontSize: 16)),
+            ),
+            const SizedBox(height: 100),
+            Row(
+              children: [
+                Expanded(child: Divider(color: Colors.grey[400])),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text('OU'),
+                ),
+                Expanded(child: Divider(color: Colors.grey[400])),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildSocialLoginButton(
+                  icon: FontAwesomeIcons.google,
+                  color: Colors.red,
+                  onTap: _signInWithGoogle,
+                ),
+                const SizedBox(width: 20),
+                _buildSocialLoginButton(
+                  icon: FontAwesomeIcons.facebook,
+                  color: Colors.blue,
+                  onTap: () {
+                    // lógica de login com Facebook
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: const Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Já tem uma conta?',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                      TextSpan(
+                        text: ' Login',
                         style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                      ))
-                ],
-              )
-            ],
-          ),
+                          color: Color.fromARGB(255, 18, 90, 158),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocialLoginButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+        ),
+        child: Icon(icon, color: Colors.white),
       ),
     );
   }
@@ -134,7 +185,6 @@ class _SignUpPageState extends State<SignUpPage> {
       isSigningUp = true;
     });
 
-    String username = _usernameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
 
@@ -143,11 +193,40 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() {
       isSigningUp = false;
     });
+
     if (user != null) {
-      showToast(message: "User is successfully created");
-      Navigator.pushNamed(context, "/home");
+      if (mounted) {
+        showToast(message: "Usuário foi criado com sucesso");
+        Navigator.pushNamed(context, "/home");
+      }
     } else {
-      showToast(message: "Some error happend");
+      showToast(message: "Algo deu errado, verifique as credenciais");
+    }
+  }
+
+  _signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken,
+        );
+
+        await _firebaseAuth.signInWithCredential(credential);
+        if (mounted) {
+          Navigator.pushNamed(context, "/home");
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showToast(message: "Algo deu errado $e");
+      }
     }
   }
 }

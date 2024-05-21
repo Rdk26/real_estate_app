@@ -1,44 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/pages/explore.dart';
+import 'package:real_estate_app/pages/settings_page.dart';
 import 'package:real_estate_app/theme/color.dart';
 import 'package:real_estate_app/widgets/bottombar_item.dart';
-
 import 'home.dart';
+import 'favorites_page.dart';
+import 'conversations_page.dart';
 
 class RootApp extends StatefulWidget {
-  const RootApp({Key? key}) : super(key: key);
+  final VoidCallback onToggleTheme;
+
+  const RootApp({super.key, required this.onToggleTheme});
 
   @override
-  _RootAppState createState() => _RootAppState();
+  RootAppState createState() => RootAppState();
 }
 
-class _RootAppState extends State<RootApp> {
+class RootAppState extends State<RootApp> {
   int _activeTab = 0;
   final List _barItems = [
     {
       "icon": Icons.home_outlined,
       "active_icon": Icons.home_rounded,
-      "page": HomePage(),
+      "page": const HomePage(),
     },
     {
       "icon": Icons.search_outlined,
       "active_icon": Icons.search,
-      "page": ExplorePage(),
+      "page": const ExplorePage(),
     },
     {
       "icon": Icons.favorite_border,
       "active_icon": Icons.favorite_outlined,
-      "page": HomePage(),
+      "page": const FavoritesPage(),
     },
     {
       "icon": Icons.forum_outlined,
       "active_icon": Icons.forum_rounded,
-      "page": HomePage(),
+      "page": const ConversationsPage(),
     },
     {
       "icon": Icons.settings_outlined,
       "active_icon": Icons.settings_rounded,
-      "page": HomePage(),
+      "page": const SettingsPage(),
     },
   ];
 
@@ -67,7 +71,7 @@ class _RootAppState extends State<RootApp> {
     return Container(
       height: 55,
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         color: AppColor.bottomBarColor,
         borderRadius: BorderRadius.circular(20),
@@ -76,7 +80,7 @@ class _RootAppState extends State<RootApp> {
             color: AppColor.shadowColor.withOpacity(0.1),
             blurRadius: 1,
             spreadRadius: 1,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           )
         ],
       ),

@@ -4,15 +4,15 @@ import 'package:real_estate_app/theme/color.dart';
 import 'custom_image.dart';
 
 class RecommendItem extends StatelessWidget {
-  const RecommendItem({Key? key, required this.data}) : super(key: key);
-  final data;
+  const RecommendItem({super.key, required this.data});
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 220,
       height: 130,
-      margin: EdgeInsets.only(right: 15),
+      margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -20,7 +20,7 @@ class RecommendItem extends StatelessWidget {
             color: AppColor.shadowColor.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 1,
-            offset: Offset(0, 1), // changes position of shadow
+            offset: const Offset(0, 1), // changes position of shadow
           ),
         ],
       ),
@@ -69,7 +69,7 @@ class RecommendItem extends StatelessWidget {
           data["name"],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ class RecommendItem extends StatelessWidget {
         ),
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.place_outlined,
               color: Colors.white,
               size: 13,
@@ -90,7 +90,7 @@ class RecommendItem extends StatelessWidget {
             ),
             Text(
               data["location"],
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: Colors.white,
               ),

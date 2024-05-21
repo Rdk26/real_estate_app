@@ -1,45 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:real_estate_app/pages/broker_details_page.dart';
 import 'package:real_estate_app/theme/color.dart';
 import 'custom_image.dart';
 
 class BrokerItem extends StatelessWidget {
-  const BrokerItem({Key? key, required this.data}) : super(key: key);
+  const BrokerItem({super.key, required this.data});
 
-  final data;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.shadowColor.withOpacity(0.1),
-            spreadRadius: .5,
-            blurRadius: 1,
-            offset: Offset(0, 1), // changes position of shadow
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BrokerDetailsPage(data: data),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildProfile(),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            data["description"],
-            style: TextStyle(height: 1.5, color: AppColor.darker),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          _buildRate()
-        ],
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.shadowColor.withOpacity(0.1),
+              spreadRadius: .5,
+              blurRadius: 1,
+              offset: const Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildProfile(),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              data["description"],
+              style: const TextStyle(height: 1.5, color: AppColor.darker),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            _buildRate()
+          ],
+        ),
       ),
     );
   }
@@ -60,14 +71,14 @@ class BrokerItem extends StatelessWidget {
           children: [
             Text(
               data["name"],
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
               height: 3,
             ),
             Text(
               data["type"],
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         )
@@ -76,7 +87,7 @@ class BrokerItem extends StatelessWidget {
   }
 
   Widget _buildRate() {
-    return Row(
+    return const Row(
       children: [
         Icon(
           Icons.star,

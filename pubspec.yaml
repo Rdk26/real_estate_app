@@ -44,6 +44,11 @@ dependencies:
   get: ^4.6.6
   fluttertoast: ^8.2.5
   google_sign_in: ^6.2.1
+  logger: ^1.0.0
+  intl: ^0.17.0
+  flutter_webrtc: ^0.8.5
+  flutter_sound: ^8.4.0
+  image_picker: ^0.8.4+4 
 
 dev_dependencies:
   flutter_test:

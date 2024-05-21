@@ -1,32 +1,52 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  RegisterScreenState createState() => RegisterScreenState();
+}
+
+class RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController lastnameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final Logger logger = Logger();
 
-  RegisterScreen({super.key});
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
-  Future<void> registerUser(BuildContext context) async {
+  Future<void> registerUser() async {
     if (_formKey.currentState!.validate()) {
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
-          // name: nameController.text,
-          // lastname: lastnameController.text,
         );
-        // Navigate to another screen after registration
+
+        // Log the user credential information
+        logger.i('User registered: ${userCredential.user?.email}');
+
+        // Navegar para outra tela após o registro
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-          ),
-        );
+        logger.e('Registration failed', e);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
+        }
       }
     }
   }
@@ -35,7 +55,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        title: const Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,29 +64,9 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // TextFormField(
-              //   controller: nameController,
-              //   decoration: InputDecoration(labelText: 'Name'),
-              //   validator: (value) {
-              //     if (value!.isEmpty) {
-              //       return 'Please enter your name';
-              //     }
-              //     return null;
-              //   },
-              // ),
-              // TextFormField(
-              //   controller: lastnameController,
-              //   decoration: InputDecoration(labelText: 'Lastname'),
-              //   validator: (value) {
-              //     if (value!.isEmpty) {
-              //       return 'Please enter your lastname';
-              //     }
-              //     return null;
-              //   },
-              // ),
               TextFormField(
                 controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter your email';
@@ -76,7 +76,7 @@ class RegisterScreen extends StatelessWidget {
               ),
               TextFormField(
                 controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -86,15 +86,15 @@ class RegisterScreen extends StatelessWidget {
                 },
               ),
               ElevatedButton(
-                onPressed: () => registerUser(context),
-                child: Text('Register'),
+                onPressed: registerUser,
+                child: const Text('Register'),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: Text('Já tem uma conta? Clique aqui para fazer login'),
+                child: const Text('Já tem uma conta? Clique aqui para fazer login'),
               ),
             ],
           ),

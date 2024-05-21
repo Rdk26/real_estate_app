@@ -3,13 +3,13 @@ import 'package:real_estate_app/theme/color.dart';
 
 class CategoryItem extends StatelessWidget {
   const CategoryItem({
-    Key? key,
+    super.key,
     required this.data,
     this.selected = false,
     this.onTap,
-  }) : super(key: key);
+  });
 
-  final data;
+  final Map<String, dynamic> data;
   final bool selected;
   final GestureTapCallback? onTap;
 
@@ -20,8 +20,8 @@ class CategoryItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn,
-        padding: EdgeInsets.fromLTRB(5, 20, 5, 0),
-        margin: EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.fromLTRB(5, 20, 5, 0),
+        margin: const EdgeInsets.only(right: 10),
         width: 90,
         height: 90,
         decoration: BoxDecoration(
@@ -32,7 +32,7 @@ class CategoryItem extends StatelessWidget {
               color: AppColor.shadowColor.withOpacity(0.1),
               spreadRadius: .5,
               blurRadius: .5,
-              offset: Offset(0, 1), // changes position of shadow
+              offset: const Offset(0, 1), // changes position of shadow
             ),
           ],
         ),

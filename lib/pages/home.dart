@@ -1,37 +1,48 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:real_estate_app/theme/color.dart';
 import 'package:real_estate_app/utils/data.dart';
-import 'package:real_estate_app/widgets/category_item.dart';
-import 'package:real_estate_app/widgets/custom_image.dart';
-import 'package:real_estate_app/widgets/custom_textbox.dart';
 import 'package:real_estate_app/widgets/icon_box.dart';
 import 'package:real_estate_app/widgets/property_item.dart';
-import 'package:real_estate_app/widgets/recent_item.dart';
+import 'package:real_estate_app/pages/property_details_page.dart';
+import 'package:real_estate_app/theme/color.dart';
+import 'package:real_estate_app/widgets/custom_textbox.dart';
+import 'package:real_estate_app/widgets/category_item.dart';
 import 'package:real_estate_app/widgets/recommend_item.dart';
+import 'package:real_estate_app/widgets/recent_item.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          backgroundColor: AppColor.appBgColor,
-          pinned: true,
-          snap: true,
-          floating: true,
-          title: _buildHeader(),
-        ),
-        SliverToBoxAdapter(child: _buildBody())
-      ],
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: AppColor.appBgColor,
+            pinned: true,
+            snap: true,
+            floating: true,
+            title: _buildHeader(),
+          ),
+          SliverToBoxAdapter(child: _buildBody())
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showOptions(context);
+        },
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: CustomFloatingActionButtonLocation(
+        FloatingActionButtonLocation.endFloat,
+        const Offset(0, -50),
+      ),
     );
   }
 
@@ -46,7 +57,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Hello!",
+                  "Olá!",
                   style: TextStyle(
                     color: AppColor.darker,
                     fontSize: 14,
@@ -63,13 +74,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            CustomImage(
-              profile,
-              width: 35,
-              height: 35,
-              trBackground: true,
-              borderColor: AppColor.primary,
-              radius: 10,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+              child: const CircleAvatar(
+                backgroundImage: NetworkImage(
+                  'https://avatars.githubusercontent.com/u/86506519?v=4',
+                ),
+                radius: 20,
+              ),
             ),
           ],
         ),
@@ -99,11 +113,11 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Popular",
+                  "Populares",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  "See all",
+                  "Ver tudo",
                   style: TextStyle(fontSize: 14, color: AppColor.darker),
                 ),
               ],
@@ -122,11 +136,11 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Recommended",
+                  "Recomendado",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  "See all",
+                  "Ver tudo",
                   style: TextStyle(fontSize: 14, color: AppColor.darker),
                 ),
               ],
@@ -145,11 +159,11 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Recent",
+                  "Recente",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  "See all",
+                  "Ver tudo",
                   style: TextStyle(fontSize: 14, color: AppColor.darker),
                 ),
               ],
@@ -168,26 +182,106 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSearch() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: CustomTextBox(
-              hint: "Search",
+              hint: "Pesquisar",
               prefix: Icon(Icons.search, color: Colors.grey),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           IconBox(
             bgColor: AppColor.secondary,
             radius: 10,
-            child: Icon(Icons.filter_list_rounded, color: Colors.white),
-          )
+            child: const Icon(Icons.filter_list_rounded, color: Colors.white),
+            onTap: () {
+              _showFilters(context);
+            },
+          ),
         ],
       ),
+    );
+  }
+
+  void _showFilters(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Filtros",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              _buildFilterItem("Intervalo de Preço"),
+              _buildFilterItem("Localização"),
+              _buildFilterItem("Tipo"),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Aplicar filtros
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Aplicar Filtros"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.add),
+                title: const Text("Colocar anúncios"),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/addAnnouncement');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.view_list),
+                title: const Text("Visualizar meus anúncios"),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Naveguar para ver a página de anúncios
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterItem(String label) {
+    return ListTile(
+      title: Text(label),
+      trailing: const Icon(Icons.arrow_forward_ios),
+      onTap: () {
+        // Processar clique no item de filtro
+      },
     );
   }
 
@@ -222,8 +316,18 @@ class _HomePageState extends State<HomePage> {
       ),
       items: List.generate(
         populars.length,
-        (index) => PropertyItem(
-          data: populars[index],
+        (index) => GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PropertyDetailsPage(data: populars[index]),
+              ),
+            );
+          },
+          child: PropertyItem(
+            data: populars[index],
+          ),
         ),
       ),
     );
@@ -232,8 +336,18 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRecommended() {
     List<Widget> lists = List.generate(
       recommended.length,
-      (index) => RecommendItem(
-        data: recommended[index],
+      (index) => GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PropertyDetailsPage(data: recommended[index]),
+            ),
+          );
+        },
+        child: RecommendItem(
+          data: recommended[index],
+        ),
       ),
     );
 
@@ -247,8 +361,18 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRecent() {
     List<Widget> lists = List.generate(
       recents.length,
-      (index) => RecentItem(
-        data: recents[index],
+      (index) => GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PropertyDetailsPage(data: recents[index]),
+            ),
+          );
+        },
+        child: RecentItem(
+          data: recents[index],
+        ),
       ),
     );
 
@@ -257,5 +381,18 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(bottom: 5, left: 15),
       child: Row(children: lists),
     );
+  }
+}
+
+class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
+  final FloatingActionButtonLocation location;
+  final Offset offset;
+
+  CustomFloatingActionButtonLocation(this.location, this.offset);
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    final Offset baseOffset = location.getOffset(scaffoldGeometry);
+    return baseOffset + offset;
   }
 }

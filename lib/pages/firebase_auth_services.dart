@@ -1,39 +1,51 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/material.dart';
+import 'package:real_estate_app/models/user.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
-import '../../../global/common/toast.dart';
+class UserRepository extends GetxController {
+  static UserRepository get instance => Get.find();
 
-class FirebaseAuthService {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final _auth = auth.FirebaseAuth.instance;
+  final _logger = Logger();
 
-  Future<User?> signUpWithEmailAndPassword(
-      String email, String password) async {
+  Future<auth.UserCredential> loginWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential credential = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      return credential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        showToast(message: 'The email address is already in use.');
-      } else {
-        showToast(message: 'An error occurred: ${e.code}');
-      }
+      return await _auth.signInWithEmailAndPassword(email: email, password: password).whenComplete(
+        () => Get.snackbar('Success', 'Registado com sucesso',
+          colorText: Colors.green,
+        ),
+      );
+    } catch (error) {
+      Get.snackbar('Error', "Something went wrong. Try again",
+        colorText: Colors.red,
+      );
+     _logger.e("Registration error", error);
+      rethrow;
     }
-    return null;
   }
 
-  Future<User?> signInWithEmailAndPassword(
-      String email, String password) async {
+  Future<auth.UserCredential> registerWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential credential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      return credential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        showToast(message: 'Invalid email or password.');
-      } else {
-        showToast(message: 'An error occurred: ${e.code}');
-      }
+      return await _auth.createUserWithEmailAndPassword(email: email, password: password).whenComplete(
+        () => Get.snackbar('Success', 'Registado com sucesso',
+          colorText: Colors.green,
+        ),
+      );
+    } catch (error) {
+      Get.snackbar('Erro', "Algo deu errado. Tente denovo",
+        colorText: Colors.red,
+      );
+      _logger.e("erro no login", error);
+      rethrow;
     }
-    return null;
+  }
+
+  final _db = FirebaseFirestore.instance;
+
+  createUser(User user) async {
+    await _db.collection('users').add(user.toJson());
   }
 }

@@ -4,14 +4,14 @@ import 'package:real_estate_app/theme/color.dart';
 import 'custom_image.dart';
 
 class RecentItem extends StatelessWidget {
-  const RecentItem({Key? key, required this.data}) : super(key: key);
-  final data;
+  const RecentItem({super.key, required this.data});
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 280,
-      margin: EdgeInsets.only(right: 15),
+      margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -20,7 +20,7 @@ class RecentItem extends StatelessWidget {
             color: AppColor.shadowColor.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 1,
-            offset: Offset(0, 1), // changes position of shadow
+            offset: const Offset(0, 1), // changes position of shadow
           ),
         ],
       ),
@@ -49,7 +49,7 @@ class RecentItem extends StatelessWidget {
           data["name"],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
         const SizedBox(
           height: 5,
@@ -57,7 +57,7 @@ class RecentItem extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
+            const Icon(
               Icons.place_outlined,
               size: 13,
             ),
@@ -69,7 +69,7 @@ class RecentItem extends StatelessWidget {
                 data["location"],
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                 ),
               ),
@@ -81,7 +81,7 @@ class RecentItem extends StatelessWidget {
         ),
         Text(
           data["price"],
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
             color: AppColor.primary,
             fontWeight: FontWeight.w500,

@@ -6,16 +6,20 @@ import 'package:real_estate_app/widgets/company_item.dart';
 import 'package:real_estate_app/widgets/custom_textbox.dart';
 import 'package:real_estate_app/widgets/icon_box.dart';
 import 'package:real_estate_app/widgets/recommend_item.dart';
+import 'property_details_page.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ExplorePageState createState() => _ExplorePageState();
+  ExplorePageState createState() => ExplorePageState();
 }
 
-class _ExplorePageState extends State<ExplorePage> {
+class ExplorePageState extends State<ExplorePage> {
+  RangeValues _priceRange = const RangeValues(0, 1000000);
+  String _selectedLocation = 'Maputo';
+  String _selectedType = 'Casa';
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -33,22 +37,121 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   _buildHeader() {
-    return const Row(
+    return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: CustomTextBox(
-            hint: "Search",
+            hint: "Pesquisar",
             prefix: Icon(Icons.search, color: Colors.grey),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         IconBox(
           bgColor: AppColor.secondary,
           radius: 10,
-          child: Icon(Icons.filter_list_rounded, color: Colors.white),
-        )
+          child: const Icon(Icons.filter_list_rounded, color: Colors.white),
+          onTap: () {
+            _showFilterModal(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  void _showFilterModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Filtros",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildFilterOptions(),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Aplicar filtros
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Aplicar Filtros"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterOptions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Intervalo de Preço"),
+        RangeSlider(
+          values: _priceRange,
+          min: 0,
+          max: 1000000,
+          divisions: 100,
+          labels: RangeLabels(
+            '${_priceRange.start.round()} MT',
+            '${_priceRange.end.round()} MT',
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _priceRange = values;
+            });
+          },
+        ),
+        const SizedBox(height: 20),
+        const Text("Localização"),
+        DropdownButton<String>(
+          value: _selectedLocation,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedLocation = newValue!;
+            });
+          },
+          items: <String>['Maputo', 'Matola', 'Beira', 'Nampula']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 20),
+        const Text("Tipo"),
+        DropdownButton<String>(
+          value: _selectedType,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedType = newValue!;
+            });
+          },
+          items: <String>['Casa', 'Apartamento', 'Loja']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
       ],
     );
   }
@@ -64,7 +167,7 @@ class _ExplorePageState extends State<ExplorePage> {
           const Padding(
             padding: EdgeInsets.only(left: 15),
             child: Text(
-              "Matched Properties",
+              "Propriedades Correspondentes",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ),
@@ -78,7 +181,7 @@ class _ExplorePageState extends State<ExplorePage> {
           const Padding(
             padding: EdgeInsets.only(left: 15),
             child: Text(
-              "Companies",
+              "Empresas",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -104,8 +207,18 @@ class _ExplorePageState extends State<ExplorePage> {
   _buildRecommended() {
     List<Widget> lists = List.generate(
       recommended.length,
-      (index) => RecommendItem(
-        data: recommended[index],
+      (index) => GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PropertyDetailsPage(data: recommended[index]),
+            ),
+          );
+        },
+        child: RecommendItem(
+          data: recommended[index],
+        ),
       ),
     );
 
