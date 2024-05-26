@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/global/common/toast.dart';
@@ -15,8 +16,10 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -40,9 +43,9 @@ class _SignUpPageState extends State<SignUpPage> {
           children: [
             const SizedBox(height: 50),
             const Text(
-              'Crie sua conta', 
+              'Crie sua conta',
               style: TextStyle(
-               color: Color.fromARGB(255, 18, 90, 158),
+                color: Color.fromARGB(255, 18, 90, 158),
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -62,6 +65,17 @@ class _SignUpPageState extends State<SignUpPage> {
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.person_outline),
                 labelText: 'Nome',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _phoneNumberController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.phone_android_outlined),
+                labelText: 'Telefone',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
@@ -101,7 +115,10 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               child: isSigningUp
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Registar', style: TextStyle(color: Color.fromARGB(255, 18, 90, 158), fontSize: 16)),
+                  : const Text('Registar',
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 18, 90, 158),
+                          fontSize: 16)),
             ),
             const SizedBox(height: 100),
             Row(
@@ -165,7 +182,10 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildSocialLoginButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _buildSocialLoginButton(
+      {required IconData icon,
+      required Color color,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -185,16 +205,28 @@ class _SignUpPageState extends State<SignUpPage> {
       isSigningUp = true;
     });
 
+    String username = _usernameController.text;
+    String phoneNumber = _phoneNumberController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
 
     User? user = await _auth.signUpWithEmailAndPassword(email, password);
 
-    setState(() {
-      isSigningUp = false;
-    });
-
     if (user != null) {
+      await user.updateDisplayName(username);
+      await user.reload();
+      user = _firebaseAuth.currentUser;
+
+      print(user);
+
+      await _firestore.collection('users').doc(user!.uid).set({
+        'id': user.uid,
+        'name': username,
+        'email': email,
+        'phoneNumber': phoneNumber,
+        // 'address': {'street': '123 Main St', 'city': 'Anytown'},
+      });
+
       if (mounted) {
         showToast(message: "Usuário foi criado com sucesso");
         Navigator.pushNamed(context, "/home");
@@ -202,16 +234,22 @@ class _SignUpPageState extends State<SignUpPage> {
     } else {
       showToast(message: "Algo deu errado, verifique as credenciais");
     }
+
+    setState(() {
+      isSigningUp = false;
+    });
   }
 
   _signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,

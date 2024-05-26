@@ -321,7 +321,8 @@ class HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PropertyDetailsPage(data: populars[index]),
+                builder: (context) =>
+                    PropertyDetailsPage(data: populars[index]),
               ),
             );
           },
@@ -341,7 +342,8 @@ class HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PropertyDetailsPage(data: recommended[index]),
+              builder: (context) =>
+                  PropertyDetailsPage(data: recommended[index]),
             ),
           );
         },
