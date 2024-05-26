@@ -217,8 +217,6 @@ class _SignUpPageState extends State<SignUpPage> {
       await user.reload();
       user = _firebaseAuth.currentUser;
 
-      print(user);
-
       await _firestore.collection('users').doc(user!.uid).set({
         'id': user.uid,
         'name': username,

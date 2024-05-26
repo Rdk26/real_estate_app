@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -10,24 +11,57 @@ class AddAnnouncementPage extends StatefulWidget {
 }
 
 class AddAnnouncementPageState extends State<AddAnnouncementPage> {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final TextEditingController _bathRoomsController = TextEditingController();
+  final TextEditingController _bedRoomsController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _livingRoomsController = TextEditingController();
+  final TextEditingController _kitchensController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
   final List<File> _images = [];
 
   final ImagePicker _picker = ImagePicker();
 
   @override
   void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    priceController.dispose();
+    _bathRoomsController.dispose();
+    _bedRoomsController.dispose();
+    _descriptionController.dispose();
+    _livingRoomsController.dispose();
+    _kitchensController.dispose();
+    _locationController.dispose();
+    _priceController.dispose();
+    _titleController.dispose();
     super.dispose();
   }
 
-  void submitAnnouncement() {
+  void submitAnnouncement() async {
     // Lógica para enviar o anúncio
     // integrar com a API ou bd
+    String bathRooms = _bathRoomsController.text;
+    String bedRooms = _bedRoomsController.text;
+    String description = _descriptionController.text;
+    String livingRooms = _livingRoomsController.text;
+    String kitchens = _kitchensController.text;
+    String location = _locationController.text;
+    String price = _priceController.text;
+    String title = _titleController.text;
+
+    await _firestore.collection('properties').doc().set({
+      'bathRooms': bathRooms,
+      'bedRooms': bedRooms,
+      'description': description,
+      'livingRooms': livingRooms,
+      'kitchens': kitchens,
+      'location': location,
+      'price': price,
+      'title': title,
+      'images': _images,
+    });
+
     Navigator.pop(context);
   }
 
@@ -62,7 +96,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: titleController,
+                controller: _titleController,
                 decoration: const InputDecoration(
                   labelText: 'Título',
                   border: OutlineInputBorder(
@@ -72,7 +106,57 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: descriptionController,
+                controller: _bathRoomsController,
+                decoration: const InputDecoration(
+                  labelText: 'Casas de banho',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _bedRoomsController,
+                decoration: const InputDecoration(
+                  labelText: 'Quartos',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _livingRoomsController,
+                decoration: const InputDecoration(
+                  labelText: 'Salas',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Localização',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _kitchensController,
+                decoration: const InputDecoration(
+                  labelText: 'Cozinhas',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Descrição',
                   border: OutlineInputBorder(
@@ -83,7 +167,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: priceController,
+                controller: _priceController,
                 decoration: const InputDecoration(
                   labelText: 'Preço',
                   border: OutlineInputBorder(

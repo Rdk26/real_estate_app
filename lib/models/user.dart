@@ -5,7 +5,6 @@ class UserModel with ChangeNotifier {
   String _username = '';
   String _email = '';
   String _phone = '';
-  final String _password = '';
 
   String get id => _id;
   String get username => _username;
