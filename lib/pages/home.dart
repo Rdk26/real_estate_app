@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/models/user.dart';
 import 'package:real_estate_app/utils/data.dart';
 import 'package:real_estate_app/widgets/icon_box.dart';
 import 'package:real_estate_app/widgets/property_item.dart';
@@ -47,16 +49,17 @@ class HomePageState extends State<HomePage> {
   }
 
   _buildHeader() {
+    final userModel = Provider.of<UserModel>(context);
     return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Olá!",
                   style: TextStyle(
                     color: AppColor.darker,
@@ -65,8 +68,8 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  "Melvin Tivane",
-                  style: TextStyle(
+                  userModel.username,
+                  style: const TextStyle(
                     color: Colors.black87,
                     fontSize: 17,
                     fontWeight: FontWeight.w600,

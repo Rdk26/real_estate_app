@@ -1,5 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:real_estate_app/global/common/toast.dart';
 import 'package:real_estate_app/features/user_auth/user_auth_implementation/firebase_auth_services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -50,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontSize: 14,
                 color: Colors.grey,
               ),
-              textAlign: TextAlign.left, 
+              textAlign: TextAlign.left,
             ),
             const SizedBox(height: 60),
             TextFormField(
@@ -93,7 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     // lógica de recuperação de senha
                   },
-                  child: const Text('Esqueceu a Senha?', style: TextStyle(color: Color.fromARGB(255, 18, 90, 158)),),
+                  child: const Text(
+                    'Esqueceu a Senha?',
+                    style: TextStyle(color: Color.fromARGB(255, 18, 90, 158)),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -101,7 +106,11 @@ class _LoginPageState extends State<LoginPage> {
                       showPassword = !showPassword;
                     });
                   },
-                  child: Text(showPassword ? 'Ocultar Senha' : 'Mostrar Senha', style: const TextStyle(color: Color.fromARGB(255, 18, 90, 158) ),),
+                  child: Text(
+                    showPassword ? 'Ocultar Senha' : 'Mostrar Senha',
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 18, 90, 158)),
+                  ),
                 ),
               ],
             ),
@@ -115,8 +124,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               child: _isSigning
-                  ? const CircularProgressIndicator(color: Color.fromARGB(255, 255, 255, 255))
-                  : const Text('Login', style: TextStyle(color: Color.fromARGB(255, 18, 90, 158), fontSize: 16),),
+                  ? const CircularProgressIndicator(
+                      color: Color.fromARGB(255, 255, 255, 255))
+                  : const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 18, 90, 158),
+                        fontSize: 16,
+                      ),
+                    ),
             ),
             const SizedBox(height: 100),
             Row(
@@ -180,7 +196,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildSocialLoginButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _buildSocialLoginButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -211,6 +231,15 @@ class _LoginPageState extends State<LoginPage> {
 
     if (user != null) {
       if (mounted) {
+        // Atualizar o provider com os dados do usuário logado
+        final userModel = Provider.of<UserModel>(context, listen: false);
+        userModel.setUserData(
+          id: user.uid,
+          username: user.displayName ?? '',
+          email: user.email ?? '',
+          phone: user.phoneNumber ?? '',
+        );
+
         showToast(message: "Usuário logado com sucesso");
         Navigator.pushNamed(context, "/home");
       }
@@ -225,19 +254,35 @@ class _LoginPageState extends State<LoginPage> {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken,
         );
 
-        await _firebaseAuth.signInWithCredential(credential);
-        if (mounted) {
-          Navigator.pushNamed(context, "/home");
+        final UserCredential userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          if (mounted) {
+            // Atualizar o provider com os dados do usuário logado
+            final userModel = Provider.of<UserModel>(context, listen: false);
+            userModel.setUserData(
+              id: user.uid,
+              username: user.displayName ?? '',
+              email: user.email ?? '',
+              phone: user.phoneNumber ?? '',
+            );
+
+            Navigator.pushNamed(context, "/home");
+          }
         }
       }
     } catch (e) {

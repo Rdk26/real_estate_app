@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:real_estate_app/features/user_auth/presentation/pages/change_password.dart';
 import 'package:real_estate_app/firebase_options.dart';
+import 'package:real_estate_app/models/user.dart';
 import 'package:real_estate_app/pages/add_announcement_page.dart';
 import 'package:real_estate_app/pages/favorites_page.dart';
 import 'package:real_estate_app/pages/profile_page.dart';
@@ -11,8 +13,8 @@ import 'package:real_estate_app/features/user_auth/presentation/pages/login_page
 import 'package:real_estate_app/features/app/splash_screen/splash_screen.dart';
 import 'package:real_estate_app/theme/color.dart';
 import 'package:real_estate_app/pages/settings_page.dart';
-import 'package:real_estate_app/pages/conversations_page.dart'; 
-import 'package:real_estate_app/pages/chat_page.dart'; 
+import 'package:real_estate_app/pages/conversations_page.dart';
+import 'package:real_estate_app/pages/chat_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +22,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -56,8 +65,8 @@ class MyAppState extends State<MyApp> {
         '/signUp': (context) => const SignUpPage(),
         '/home': (context) => RootApp(onToggleTheme: toggleTheme),
         '/settings': (context) => const SettingsPage(),
-        '/conversations': (context) => const ConversationsPage(), 
-        '/chat': (context) => const ChatPage(name: '', image: ''), 
+        '/conversations': (context) => const ConversationsPage(),
+        '/chat': (context) => const ChatPage(name: '', image: ''),
         '/profile': (context) => const ProfilePage(),
         '/favorites_page': (context) => const FavoritesPage(),
         '/change_password': (context) => const ChangePasswordPage(),

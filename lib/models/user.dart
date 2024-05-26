@@ -1,23 +1,27 @@
-class User {
-  final String? id;
-  final String name;
-  final String lastname;
-  final String email;
-  final String password;
+import 'package:flutter/foundation.dart';
 
-  const User(
-      {this.id,
-      required this.name,
-      required this.lastname,
-      required this.email,
-      required this.password});
+class UserModel with ChangeNotifier {
+  String _id = '';
+  String _username = '';
+  String _email = '';
+  String _phone = '';
+  final String _password = '';
 
-  Map<String, dynamic> toJson() {
-    return {
-      'Name': name,
-      'Lastname': lastname,
-      'Email': email,
-      'Password': password
-    };
+  String get id => _id;
+  String get username => _username;
+  String get email => _email;
+  String get phone => _phone;
+
+  void setUserData({
+    required String id,
+    required String username,
+    required String email,
+    required String phone,
+  }) {
+    _id = id;
+    _username = username;
+    _email = email;
+    _phone = phone;
+    notifyListeners();
   }
 }
