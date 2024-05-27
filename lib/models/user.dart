@@ -1,15 +1,17 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class UserModel with ChangeNotifier {
-  String _id = '';
-  String _username = '';
-  String _email = '';
-  String _phone = '';
+  String id;
+  String username;
+  String email;
+  String phone;
 
-  String get id => _id;
-  String get username => _username;
-  String get email => _email;
-  String get phone => _phone;
+  UserModel({
+    this.id = '',
+    this.username = '',
+    this.email = '',
+    this.phone = '',
+  });
 
   void setUserData({
     required String id,
@@ -17,10 +19,10 @@ class UserModel with ChangeNotifier {
     required String email,
     required String phone,
   }) {
-    _id = id;
-    _username = username;
-    _email = email;
-    _phone = phone;
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.phone = phone;
     notifyListeners();
   }
 }

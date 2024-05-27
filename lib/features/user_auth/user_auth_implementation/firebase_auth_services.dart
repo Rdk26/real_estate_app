@@ -1,39 +1,55 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../global/common/toast.dart';
-
 class FirebaseAuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<User?> signUpWithEmailAndPassword(
-      String email, String password) async {
+  Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential credential = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      return credential.user;
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        showToast(message: 'The email address is already in use.');
-      } else {
-        showToast(message: 'An error occurred: ${e.code}');
+      // Tratamento de erros específicos
+      switch (e.code) {
+        case 'user-not-found':
+          print('No user found for that email.');
+          break;
+        case 'wrong-password':
+          print('Wrong password provided.');
+          break;
+        default:
+          print('Error: ${e.message}');
       }
+      return null;
     }
-    return null;
   }
 
-  Future<User?> signInWithEmailAndPassword(
-      String email, String password) async {
+  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential credential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      return credential.user;
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        showToast(message: 'Invalid email or password.');
-      } else {
-        showToast(message: 'An error occurred: ${e.code}');
+      // Tratamento de erros específicos
+      switch (e.code) {
+        case 'weak-password':
+          print('The password provided is too weak.');
+          break;
+        case 'email-already-in-use':
+          print('The account already exists for that email.');
+          break;
+        default:
+          print('Error: ${e.message}');
       }
+      return null;
     }
-    return null;
+  }
+
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
   }
 }

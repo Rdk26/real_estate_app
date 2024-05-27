@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:real_estate_app/models/user.dart';
+import 'package:real_estate_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:real_estate_app/global/common/toast.dart';
 import 'package:real_estate_app/features/user_auth/user_auth_implementation/firebase_auth_services.dart';

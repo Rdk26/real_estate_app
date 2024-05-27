@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/models/user_model.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,9 +21,9 @@ class ProfilePageState extends State<ProfilePage> {
   
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      _nameController.text = user.displayName ?? 'Melvin Tivane';
-      _emailController.text = user.email ?? 'melvin.tivane@example.com';
-      _phoneController.text = '+258 84 123 4567'; 
+      _nameController.text = user.displayName ?? '';
+      _emailController.text = user.email ?? '';
+      _phoneController.text = user.phoneNumber ?? '';
     }
   }
 
@@ -35,45 +37,51 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future<void> _updateProfile() async {
     var user = FirebaseAuth.instance.currentUser;
+    final userModel = Provider.of<UserModel>(context, listen: false);
     if (user != null) {
       try {
+        if (_emailController.text != user.email) {
+          await user.updateEmail(_emailController.text);
+        }
         await user.updateDisplayName(_nameController.text);
-        await user.verifyBeforeUpdateEmail(_emailController.text);
-        // Update phone number in Firestore or your database
-        // Add your logic here to update the phone number
         await user.reload();
         user = FirebaseAuth.instance.currentUser;
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Successo'),
-            content: const Text('Perfil atualizado com sucesso.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        await userModel.updateUserData(); // Atualiza os dados do usuário na UserModel
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Sucesso'),
+              content: const Text('Perfil atualizado com sucesso.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       } catch (e) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Erro'),
-            content: Text('Falha ao atualizar o perfil: $e'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: Text('Falha ao atualizar o perfil: $e'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
   }
@@ -82,18 +90,20 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Perfil"),
+        title: const Text("Editar Perfil"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1520078452277-0832598937e5?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            const Center(
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  'https://images.unsplash.com/photo-1520078452277-0832598937e5?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                ),
+                radius: 50,
               ),
-              radius: 50,
             ),
             const SizedBox(height: 20),
             TextFormField(

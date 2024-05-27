@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate_app/features/user_auth/presentation/pages/change_password.dart';
 import 'package:real_estate_app/firebase_options.dart';
-import 'package:real_estate_app/models/user.dart';
+import 'package:real_estate_app/models/user_model.dart';
 import 'package:real_estate_app/pages/add_announcement_page.dart';
 import 'package:real_estate_app/pages/favorites_page.dart';
 import 'package:real_estate_app/pages/profile_page.dart';
@@ -15,6 +15,8 @@ import 'package:real_estate_app/theme/color.dart';
 import 'package:real_estate_app/pages/settings_page.dart';
 import 'package:real_estate_app/pages/conversations_page.dart';
 import 'package:real_estate_app/pages/chat_page.dart';
+import 'package:real_estate_app/pages/my_announcements_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +24,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UserModel()),
+        ChangeNotifierProvider(create: (_) => UserModel()),
       ],
       child: const MyApp(),
     ),
@@ -71,6 +74,10 @@ class MyAppState extends State<MyApp> {
         '/favorites_page': (context) => const FavoritesPage(),
         '/change_password': (context) => const ChangePasswordPage(),
         '/addAnnouncement': (context) => const AddAnnouncementPage(),
+        '/myAnnouncements': (context) => MyAnnouncementsPage(
+          userId: FirebaseAuth.instance.currentUser!.uid,
+        ),
+        '/edit_profile': (context) => const ProfilePage(), // Adicione essa linha
       },
     );
   }

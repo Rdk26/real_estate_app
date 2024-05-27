@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -11,6 +10,7 @@ List populars = [
     "price": "25.800",
     "location": "Coop, Maputo",
     "is_favorited": true,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NHx8Zm9vZHxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
@@ -18,6 +18,7 @@ List populars = [
     "price": "150.0000",
     "location": "Triunfo, Maputo",
     "is_favorited": false,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?q=80&w=1734&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -25,6 +26,7 @@ List populars = [
     "price": "17.500",
     "location": "Mozal, Moçambique",
     "is_favorited": false,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -32,6 +34,7 @@ List populars = [
     "price": "90.000",
     "location": "Coop, Maputo",
     "is_favorited": false,
+    "category": "Apartamentos",
   },
 ];
 
@@ -42,6 +45,7 @@ List recommended = [
     "price": "18.000",
     "location": "Ponta de Ouro, Maputo",
     "is_favorited": true,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?q=80&w=1734&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -49,6 +53,7 @@ List recommended = [
     "price": "17.500",
     "location": "Triunfo, Maputo",
     "is_favorited": false,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1507149833265-60c372daea22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDExfHx8ZW58MHx8fHx8",
@@ -56,6 +61,7 @@ List recommended = [
     "price": "140.000",
     "location": "25 de Setembro, Maputo",
     "is_favorited": true,
+    "category": "Apartamentos",
   },
 ];
 
@@ -66,6 +72,7 @@ List recents = [
     "price": "18.000",
     "location": "Ponta de Ouro, Maputo",
     "is_favorited": true,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?q=80&w=1734&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -73,6 +80,7 @@ List recents = [
     "price": "17.500",
     "location": "Triunfo, Maputo",
     "is_favorited": false,
+    "category": "Casas",
   },
   {
     "image": "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -80,7 +88,7 @@ List recents = [
     "price": "25.800",
     "location": "Coop, Maputo",
     "is_favorited": true,
-
+    "category": "Casas",
   },
 ];
 

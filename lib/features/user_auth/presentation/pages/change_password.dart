@@ -42,10 +42,14 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       try {
         await user.reauthenticateWithCredential(credential);
         await user.updatePassword(newPassword);
-        showToast(message: "Senha atualizada com sucesso");
-        Navigator.pop(context);
+        if (mounted) {
+          showToast(message: "Senha atualizada com sucesso");
+          Navigator.pop(context);
+        }
       } catch (e) {
-        showToast(message: "Erro ao atualizar a senha: $e");
+        if (mounted) {
+          showToast(message: "Erro ao atualizar a senha: $e");
+        }
       }
     }
 

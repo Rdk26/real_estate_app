@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:real_estate_app/global/common/toast.dart';
 import 'package:real_estate_app/features/user_auth/user_auth_implementation/firebase_auth_services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,7 +15,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final firebase_auth.FirebaseAuth _firebaseAuth = firebase_auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController _usernameController = TextEditingController();
@@ -210,7 +210,7 @@ class _SignUpPageState extends State<SignUpPage> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    User? user = await _auth.signUpWithEmailAndPassword(email, password);
+    firebase_auth.User? user = await _auth.signUpWithEmailAndPassword(email, password);
 
     if (user != null) {
       await user.updateDisplayName(username);
@@ -222,7 +222,6 @@ class _SignUpPageState extends State<SignUpPage> {
         'name': username,
         'email': email,
         'phoneNumber': phoneNumber,
-        // 'address': {'street': '123 Main St', 'city': 'Anytown'},
       });
 
       if (mounted) {
@@ -249,7 +248,7 @@ class _SignUpPageState extends State<SignUpPage> {
         final GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;
 
-        final AuthCredential credential = GoogleAuthProvider.credential(
+        final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken,
         );

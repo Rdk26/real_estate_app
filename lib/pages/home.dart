@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:real_estate_app/models/user.dart';
+import 'package:real_estate_app/models/user_model.dart';
+import 'package:real_estate_app/pages/my_announcements_page.dart';
 import 'package:real_estate_app/utils/data.dart';
 import 'package:real_estate_app/widgets/icon_box.dart';
 import 'package:real_estate_app/widgets/property_item.dart';
@@ -11,6 +12,7 @@ import 'package:real_estate_app/widgets/category_item.dart';
 import 'package:real_estate_app/widgets/recommend_item.dart';
 import 'package:real_estate_app/widgets/recent_item.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +22,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  int _selectedCategory = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +99,13 @@ class HomePageState extends State<HomePage> {
   }
 
   _buildBody() {
+    List<Map<String, dynamic>> filteredPopulars =
+        getFilteredProperties(_selectedCategory, populars.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredRecommended =
+        getFilteredProperties(_selectedCategory, recommended.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredRecents =
+        getFilteredProperties(_selectedCategory, recents.cast<Map<String, dynamic>>());
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +140,7 @@ class HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          _buildPopulars(),
+          _buildPopulars(filteredPopulars),
           const SizedBox(
             height: 20,
           ),
@@ -152,7 +163,7 @@ class HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          _buildRecommended(),
+          _buildRecommended(filteredRecommended),
           const SizedBox(
             height: 20,
           ),
@@ -175,7 +186,7 @@ class HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          _buildRecent(),
+          _buildRecent(filteredRecents),
           const SizedBox(
             height: 100,
           ),
@@ -268,7 +279,14 @@ class HomePageState extends State<HomePage> {
                 title: const Text("Visualizar meus anúncios"),
                 onTap: () {
                   Navigator.pop(context);
-                  // Naveguar para ver a página de anúncios
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyAnnouncementsPage(
+                        userId: FirebaseAuth.instance.currentUser!.uid,
+                      ),
+                    ),
+                  );
                 },
               ),
             ],
@@ -288,7 +306,6 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  int _selectedCategory = 0;
   Widget _buildCategories() {
     List<Widget> lists = List.generate(
       categories.length,
@@ -309,49 +326,49 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPopulars() {
+  Widget _buildPopulars(List<Map<String, dynamic>> filteredPopulars) {
     return CarouselSlider(
       options: CarouselOptions(
-        height: 240,
+        height: 300, // Adjusted height
         enlargeCenterPage: true,
         disableCenter: true,
         viewportFraction: .8,
       ),
       items: List.generate(
-        populars.length,
+        filteredPopulars.length,
         (index) => GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    PropertyDetailsPage(data: populars[index]),
+                    PropertyDetailsPage(data: filteredPopulars[index]),
               ),
             );
           },
           child: PropertyItem(
-            data: populars[index],
+            data: filteredPopulars[index],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildRecommended() {
+  Widget _buildRecommended(List<Map<String, dynamic>> filteredRecommended) {
     List<Widget> lists = List.generate(
-      recommended.length,
+      filteredRecommended.length,
       (index) => GestureDetector(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  PropertyDetailsPage(data: recommended[index]),
+                  PropertyDetailsPage(data: filteredRecommended[index]),
             ),
           );
         },
         child: RecommendItem(
-          data: recommended[index],
+          data: filteredRecommended[index],
         ),
       ),
     );
@@ -363,20 +380,21 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRecent() {
+  Widget _buildRecent(List<Map<String, dynamic>> filteredRecents) {
     List<Widget> lists = List.generate(
-      recents.length,
+      filteredRecents.length,
       (index) => GestureDetector(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PropertyDetailsPage(data: recents[index]),
+              builder: (context) =>
+                  PropertyDetailsPage(data: filteredRecents[index]),
             ),
           );
         },
         child: RecentItem(
-          data: recents[index],
+          data: filteredRecents[index],
         ),
       ),
     );
@@ -386,6 +404,15 @@ class HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(bottom: 5, left: 15),
       child: Row(children: lists),
     );
+  }
+
+  List<Map<String, dynamic>> getFilteredProperties(int categoryIndex, List<Map<String, dynamic>> properties) {
+    if (categoryIndex == 0) {
+      return properties;
+    } else {
+      String category = categories[categoryIndex]['name'];
+      return properties.where((property) => property['category'] == category).toList();
+    }
   }
 }
 
