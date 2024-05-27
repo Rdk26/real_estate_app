@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate_app/models/user.dart';
@@ -20,6 +21,33 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> populars = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPopulars();
+  }
+
+  Future<void> fetchPopulars() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('properties').get();
+      setState(() {
+        populars = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print("Error fetching popular properties: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

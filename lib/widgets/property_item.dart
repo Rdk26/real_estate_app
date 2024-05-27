@@ -76,7 +76,7 @@ class PropertyItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          data["name"],
+          data["title"],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
+
+import 'package:real_estate_app/models/user.dart';
 
 class AddAnnouncementPage extends StatefulWidget {
   const AddAnnouncementPage({super.key});
@@ -21,6 +24,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
   final List<File> _images = [];
 
   final ImagePicker _picker = ImagePicker();
@@ -38,7 +42,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
     super.dispose();
   }
 
-  void submitAnnouncement() async {
+  void submitAnnouncement(String owner) async {
     // Lógica para enviar o anúncio
     // integrar com a API ou bd
     String bathRooms = _bathRoomsController.text;
@@ -49,6 +53,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
     String location = _locationController.text;
     String price = _priceController.text;
     String title = _titleController.text;
+    String image = _imageUrlController.text;
 
     await _firestore.collection('properties').doc().set({
       'bathRooms': bathRooms,
@@ -59,7 +64,9 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
       'location': location,
       'price': price,
       'title': title,
-      'images': _images,
+      'image': image,
+      'is_favorited': false,
+      'owner': owner
     });
 
     Navigator.pop(context);
@@ -85,6 +92,10 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userModel = Provider.of<UserModel>(context);
+
+    String owner = userModel.id;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Adicionar Anúncio"),
@@ -156,6 +167,16 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                controller: _imageUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'Url da imagem',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Descrição',
@@ -196,7 +217,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               _buildImageGrid(),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: submitAnnouncement,
+                onPressed: () => submitAnnouncement(owner),
                 child: const Text("Submeter Anúncio"),
               ),
             ],
