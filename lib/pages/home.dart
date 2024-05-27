@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate_app/models/user_model.dart';
@@ -22,7 +23,32 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _selectedCategory = 0;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> populars = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPopulars();
+  }
+
+  Future<void> fetchPopulars() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('properties').get();
+      setState(() {
+        populars = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print("Error fetching popular properties: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +125,12 @@ class HomePageState extends State<HomePage> {
   }
 
   _buildBody() {
-    List<Map<String, dynamic>> filteredPopulars =
-        getFilteredProperties(_selectedCategory, populars.cast<Map<String, dynamic>>());
-    List<Map<String, dynamic>> filteredRecommended =
-        getFilteredProperties(_selectedCategory, recommended.cast<Map<String, dynamic>>());
-    List<Map<String, dynamic>> filteredRecents =
-        getFilteredProperties(_selectedCategory, recents.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredPopulars = getFilteredProperties(
+        _selectedCategory, populars.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredRecommended = getFilteredProperties(
+        _selectedCategory, recommended.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredRecents = getFilteredProperties(
+        _selectedCategory, recents.cast<Map<String, dynamic>>());
 
     return SingleChildScrollView(
       child: Column(
@@ -406,12 +432,15 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  List<Map<String, dynamic>> getFilteredProperties(int categoryIndex, List<Map<String, dynamic>> properties) {
+  List<Map<String, dynamic>> getFilteredProperties(
+      int categoryIndex, List<Map<String, dynamic>> properties) {
     if (categoryIndex == 0) {
       return properties;
     } else {
       String category = categories[categoryIndex]['name'];
-      return properties.where((property) => property['category'] == category).toList();
+      return properties
+          .where((property) => property['category'] == category)
+          .toList();
     }
   }
 }

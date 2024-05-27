@@ -65,7 +65,8 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
       List<String> imageUrls = [];
 
       for (var image in _images) {
-        final storageRef = _storage.ref().child('announcements/${DateTime.now().millisecondsSinceEpoch}_${image.name}');
+        final storageRef = _storage.ref().child(
+            'announcements/${DateTime.now().millisecondsSinceEpoch}_${image.name}');
         final uploadTask = kIsWeb
             ? storageRef.putData(await image.readAsBytes())
             : storageRef.putFile(File(image.path));
@@ -99,7 +100,10 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
       if (widget.propertyId == null) {
         await _firestore.collection('properties').add(data);
       } else {
-        await _firestore.collection('properties').doc(widget.propertyId).update(data);
+        await _firestore
+            .collection('properties')
+            .doc(widget.propertyId)
+            .update(data);
       }
 
       print('Anúncio enviado com sucesso.');
@@ -138,14 +142,20 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
 
   Widget _buildImagePreview(XFile image) {
     if (kIsWeb) {
-      return Image.network(image.path, width: 100, height: 100, fit: BoxFit.cover);
+      return Image.network(image.path,
+          width: 100, height: 100, fit: BoxFit.cover);
     } else {
-      return Image.file(File(image.path), width: 100, height: 100, fit: BoxFit.cover);
+      return Image.file(File(image.path),
+          width: 100, height: 100, fit: BoxFit.cover);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userModel = Provider.of<UserModel>(context);
+
+    String owner = userModel.id;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Adicionar Anúncio"),
@@ -171,7 +181,8 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 value: _selectedBathrooms,
-                items: List.generate(10, (index) => (index + 1).toString()).map((String value) {
+                items: List.generate(10, (index) => (index + 1).toString())
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -192,7 +203,8 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 value: _selectedBedrooms,
-                items: List.generate(10, (index) => (index + 1).toString()).map((String value) {
+                items: List.generate(10, (index) => (index + 1).toString())
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -213,7 +225,8 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 value: _selectedLivingRooms,
-                items: List.generate(10, (index) => (index + 1).toString()).map((String value) {
+                items: List.generate(10, (index) => (index + 1).toString())
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -234,7 +247,8 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 value: _selectedKitchens,
-                items: List.generate(10, (index) => (index + 1).toString()).map((String value) {
+                items: List.generate(10, (index) => (index + 1).toString())
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -275,6 +289,16 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                controller: _imageUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'Url da imagem',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: _descriptionController,
                 maxLines: 5,
                 decoration: const InputDecoration(
@@ -285,29 +309,6 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Wrap(
-                spacing: 10,
-                children: _images
-                    .map((file) => Stack(
-                          children: [
-                            _buildImagePreview(file),
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.remove_circle, color: Colors.red),
-                                onPressed: () {
-                                  setState(() {
-                                    _images.remove(file);
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

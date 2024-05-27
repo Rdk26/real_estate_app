@@ -41,7 +41,9 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
               },
               itemBuilder: (context, index) {
                 return Image.network(
-                  (widget.data["images"] as List<String>?)?[index] ?? widget.data["image"] ?? "",
+                  (widget.data["images"] as List<String>?)?[index] ??
+                      widget.data["image"] ??
+                      "",
                   fit: BoxFit.cover,
                 );
               },
@@ -98,7 +100,7 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                 expandedHeight: 300,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Container(), 
+                  background: Container(),
                 ),
                 leading: _buildIconButton(
                   icon: Icons.arrow_back,
@@ -125,7 +127,7 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  margin: const EdgeInsets.only(top: 0.0), 
+                  margin: const EdgeInsets.only(top: 0.0),
                   padding: const EdgeInsets.all(16.0),
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -149,7 +151,7 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.data["name"] ?? "Nome não disponível",
+                              widget.data["title"] ?? "Nome não disponível",
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -173,7 +175,8 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                               color: Colors.grey, size: 12),
                           const SizedBox(width: 4),
                           Text(
-                            widget.data["location"] ?? "Localização não disponível",
+                            widget.data["location"] ??
+                                "Localização não disponível",
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.grey,
@@ -187,16 +190,20 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                         child: Row(
                           children: [
                             _buildFeatureIcon(FontAwesomeIcons.bed, "Quartos",
-                                widget.data["quartos"]?.toString() ?? "4"),
+                                widget.data["bedRooms"]?.toString() ?? "4"),
                             const SizedBox(width: 16),
                             _buildFeatureIcon(FontAwesomeIcons.bath, "WC",
-                                widget.data["wc"]?.toString() ?? "3"),
+                                widget.data["bathRooms"]?.toString() ?? "3"),
                             const SizedBox(width: 16),
-                            _buildFeatureIcon(FontAwesomeIcons.kitchenSet, "Cozinha",
-                                widget.data["cozinha"]?.toString() ?? "1"),
+                            _buildFeatureIcon(
+                                FontAwesomeIcons.kitchenSet,
+                                "Cozinha",
+                                widget.data["kitchens"]?.toString() ?? "1"),
                             const SizedBox(width: 16),
-                            _buildFeatureIcon(FontAwesomeIcons.couch, "Sala de estar",
-                                widget.data["Sala"]?.toString() ?? "2"),
+                            _buildFeatureIcon(
+                                FontAwesomeIcons.couch,
+                                "Sala de estar",
+                                widget.data["livingRooms"]?.toString() ?? "2"),
                           ],
                         ),
                       ),
@@ -210,7 +217,8 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        widget.data["description"] ?? "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's",
+                        widget.data["description"] ??
+                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's",
                         style: const TextStyle(
                           fontSize: 15,
                           height: 1.5,
@@ -353,7 +361,8 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
         const SizedBox(height: 8),
         Text(label, style: const TextStyle(fontSize: 14)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        Text(value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
       ],
     );
   }
