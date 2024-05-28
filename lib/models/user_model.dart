@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserModel extends ChangeNotifier {
+  String _id = '';
   String _username = '';
   String _email = '';
   String _phone = '';
   String _profileImageUrl = '';
 
+  String get id => _id;
   String get username => _username;
   String get email => _email;
   String get phone => _phone;
@@ -19,6 +21,7 @@ class UserModel extends ChangeNotifier {
   Future<void> _loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      _id = user.uid;
       _username = user.displayName ?? '';
       _email = user.email ?? '';
       _phone = user.phoneNumber ?? '';
@@ -27,7 +30,11 @@ class UserModel extends ChangeNotifier {
     }
   }
 
-  void setUserData({required String id, required String username, required String email, required String phone}) {
+  void setUserData(
+      {required String id,
+      required String username,
+      required String email,
+      required String phone}) {
     _username = username;
     _email = email;
     _phone = phone;

@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/models/user_model.dart';
 
 class AddAnnouncementPage extends StatefulWidget {
   final String? propertyId;
@@ -25,6 +27,7 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
   final List<XFile> _images = [];
 
   final ImagePicker _picker = ImagePicker();

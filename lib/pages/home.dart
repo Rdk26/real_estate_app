@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> populars = [];
+  int _selectedCategory = 0;
 
   @override
   void initState() {
