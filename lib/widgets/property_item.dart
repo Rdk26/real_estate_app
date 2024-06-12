@@ -39,7 +39,7 @@ class PropertyItem extends StatelessWidget {
         child: Stack(
           children: [
             CustomImage(
-              data["image"],
+              data["image"] ?? 'https://via.placeholder.com/150',
               width: double.infinity,
               height: 150,
               radius: 25,
@@ -64,7 +64,9 @@ class PropertyItem extends StatelessWidget {
     return IconBox(
       bgColor: AppColor.red,
       child: Icon(
-        data["is_favorited"] ? Icons.favorite : Icons.favorite_border,
+        data["is_favorited"] != null && data["is_favorited"]
+            ? Icons.favorite
+            : Icons.favorite_border,
         color: Colors.white,
         size: 20,
       ),
@@ -76,7 +78,7 @@ class PropertyItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          data["title"],
+          data["name"] ?? 'Sem título',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -95,7 +97,7 @@ class PropertyItem extends StatelessWidget {
               width: 3,
             ),
             Text(
-              data["location"],
+              data["location"] ?? 'Sem localização',
               style: const TextStyle(fontSize: 13, color: AppColor.darker),
             ),
           ],
@@ -104,7 +106,7 @@ class PropertyItem extends StatelessWidget {
           height: 5,
         ),
         Text(
-          data["price"],
+          data["price"] ?? 'Sem preço',
           style: const TextStyle(
             fontSize: 15,
             color: AppColor.primary,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/theme/color.dart';
-
 import 'custom_image.dart';
 
 class RecommendItem extends StatelessWidget {
@@ -27,7 +26,7 @@ class RecommendItem extends StatelessWidget {
       child: Stack(
         children: [
           CustomImage(
-            data["image"],
+            data["image"] ?? 'https://via.placeholder.com/150',
             radius: 20,
             width: double.infinity,
             height: double.infinity,
@@ -66,7 +65,7 @@ class RecommendItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          data["name"],
+          data["name"] ?? 'Sem título',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
@@ -89,7 +88,7 @@ class RecommendItem extends StatelessWidget {
               width: 3,
             ),
             Text(
-              data["location"],
+              data["location"] ?? 'Sem localização',
               style: const TextStyle(
                 fontSize: 13,
                 color: Colors.white,

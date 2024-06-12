@@ -1,22 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:real_estate_app/models/user_model.dart';
-import 'package:real_estate_app/pages/my_announcements_page.dart';
-import 'package:real_estate_app/utils/data.dart';
-import 'package:real_estate_app/widgets/icon_box.dart';
-import 'package:real_estate_app/widgets/property_item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:real_estate_app/pages/property_details_page.dart';
 import 'package:real_estate_app/theme/color.dart';
-import 'package:real_estate_app/widgets/custom_textbox.dart';
-import 'package:real_estate_app/widgets/category_item.dart';
+import 'package:real_estate_app/utils/data.dart';
+import 'package:real_estate_app/widgets/property_item.dart';
 import 'package:real_estate_app/widgets/recommend_item.dart';
 import 'package:real_estate_app/widgets/recent_item.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:real_estate_app/widgets/custom_textbox.dart';
+import 'package:real_estate_app/widgets/icon_box.dart';
+import 'package:real_estate_app/widgets/category_item.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String userName;
+
+  const HomePage({super.key, required this.userName});
 
   @override
   HomePageState createState() => HomePageState();
@@ -24,35 +25,42 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<Map<String, dynamic>> populars = [];
+  List<Map<String, dynamic>> firebasePopulars = [];
   int _selectedCategory = 0;
 
   @override
   void initState() {
     super.initState();
-    fetchPopulars();
+    fetchPopularsFromFirebase();
   }
 
-  Future<void> fetchPopulars() async {
+  Future<void> fetchPopularsFromFirebase() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('properties').get();
       setState(() {
-        populars = snapshot.docs
-            .map((doc) => doc.data() as Map<String, dynamic>)
-            .toList();
+        firebasePopulars = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return {
+            'image': data['image'] ?? 'https://via.placeholder.com/150',
+            'name': data['title'] ?? 'Sem título',
+            'price': data['price'] ?? 'Sem preço',
+            'location': data['location'] ?? 'Sem localização',
+            'is_favorited': data['is_favorited'] ?? false,
+            'category': data['category'] ?? 'Uncategorized',
+          };
+        }).toList();
       });
     } catch (e) {
-      print("Error fetching popular properties: $e");
+      logger.e("Error fetching popular properties: $e");
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> filteredPopulars = getFilteredProperties(_selectedCategory, firebasePopulars);
+    List<Map<String, dynamic>> filteredRecommended = getFilteredProperties(_selectedCategory, recommended.cast<Map<String, dynamic>>());
+    List<Map<String, dynamic>> filteredRecents = getFilteredProperties(_selectedCategory, recents.cast<Map<String, dynamic>>());
+
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -63,7 +71,7 @@ class HomePageState extends State<HomePage> {
             floating: true,
             title: _buildHeader(),
           ),
-          SliverToBoxAdapter(child: _buildBody())
+          SliverToBoxAdapter(child: _buildBody(filteredPopulars, filteredRecommended, filteredRecents))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -79,8 +87,11 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  _buildHeader() {
-    final userModel = Provider.of<UserModel>(context);
+  Widget _buildHeader() {
+    final initials = widget.userName.isNotEmpty
+        ? widget.userName.split(' ').map((word) => word[0]).take(2).join()
+        : '';
+
     return Column(
       children: [
         Row(
@@ -99,7 +110,7 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                  userModel.username,
+                  widget.userName,
                   style: const TextStyle(
                     color: Colors.black87,
                     fontSize: 17,
@@ -112,9 +123,15 @@ class HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.pushNamed(context, '/settings');
               },
-              child: const CircleAvatar(
-                backgroundImage: NetworkImage(
-                  'https://avatars.githubusercontent.com/u/86506519?v=4',
+              child: CircleAvatar(
+                backgroundColor: AppColor.secondary,
+                child: Text(
+                  initials,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 radius: 20,
               ),
@@ -125,29 +142,16 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  _buildBody() {
-    List<Map<String, dynamic>> filteredPopulars = getFilteredProperties(
-        _selectedCategory, populars.cast<Map<String, dynamic>>());
-    List<Map<String, dynamic>> filteredRecommended = getFilteredProperties(
-        _selectedCategory, recommended.cast<Map<String, dynamic>>());
-    List<Map<String, dynamic>> filteredRecents = getFilteredProperties(
-        _selectedCategory, recents.cast<Map<String, dynamic>>());
-
+  Widget _buildBody(List<Map<String, dynamic>> filteredPopulars, List<Map<String, dynamic>> filteredRecommended, List<Map<String, dynamic>> filteredRecents) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           _buildSearch(),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           _buildCategories(),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -164,13 +168,9 @@ class HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           _buildPopulars(filteredPopulars),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -187,13 +187,9 @@ class HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           _buildRecommended(filteredRecommended),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -210,13 +206,9 @@ class HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           _buildRecent(filteredRecents),
-          const SizedBox(
-            height: 100,
-          ),
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -233,9 +225,7 @@ class HomePageState extends State<HomePage> {
               prefix: Icon(Icons.search, color: Colors.grey),
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           IconBox(
             bgColor: AppColor.secondary,
             radius: 10,
@@ -271,7 +261,6 @@ class HomePageState extends State<HomePage> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Aplicar filtros
                     Navigator.pop(context);
                   },
                   child: const Text("Aplicar Filtros"),
@@ -306,14 +295,7 @@ class HomePageState extends State<HomePage> {
                 title: const Text("Visualizar meus anúncios"),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MyAnnouncementsPage(
-                        userId: FirebaseAuth.instance.currentUser!.uid,
-                      ),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/myAnnouncements');
                 },
               ),
             ],
@@ -365,11 +347,12 @@ class HomePageState extends State<HomePage> {
         filteredPopulars.length,
         (index) => GestureDetector(
           onTap: () {
+            final propertyData = filteredPopulars[index];
+            print('Navigating to PropertyDetailsPage with data: $propertyData');
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    PropertyDetailsPage(data: filteredPopulars[index]),
+                builder: (context) => PropertyDetailsPage(data: propertyData),
               ),
             );
           },
@@ -433,15 +416,12 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  List<Map<String, dynamic>> getFilteredProperties(
-      int categoryIndex, List<Map<String, dynamic>> properties) {
+  List<Map<String, dynamic>> getFilteredProperties(int categoryIndex, List<Map<String, dynamic>> properties) {
     if (categoryIndex == 0) {
       return properties;
     } else {
       String category = categories[categoryIndex]['name'];
-      return properties
-          .where((property) => property['category'] == category)
-          .toList();
+      return properties.where((property) => property['category'] == category).toList();
     }
   }
 }

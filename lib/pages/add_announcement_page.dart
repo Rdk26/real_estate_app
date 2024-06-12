@@ -62,68 +62,73 @@ class AddAnnouncementPageState extends State<AddAnnouncementPage> {
     super.dispose();
   }
 
-  Future<void> _uploadImagesAndSubmitAnnouncement() async {
-    try {
-      print('Iniciando upload de imagens...');
-      List<String> imageUrls = [];
+Future<void> _uploadImagesAndSubmitAnnouncement() async {
+  try {
+    print('Iniciando upload de imagens...');
+    List<String> imageUrls = [];
 
-      for (var image in _images) {
-        final storageRef = _storage.ref().child(
-            'announcements/${DateTime.now().millisecondsSinceEpoch}_${image.name}');
-        final uploadTask = kIsWeb
-            ? storageRef.putData(await image.readAsBytes())
-            : storageRef.putFile(File(image.path));
+    for (var image in _images) {
+      final storageRef = _storage.ref().child(
+          'announcements/${DateTime.now().millisecondsSinceEpoch}_${image.name}');
+      final uploadTask = kIsWeb
+          ? storageRef.putData(await image.readAsBytes())
+          : storageRef.putFile(File(image.path));
 
-        final snapshot = await uploadTask.whenComplete(() => null);
-        final downloadUrl = await snapshot.ref.getDownloadURL();
+      final snapshot = await uploadTask.whenComplete(() => null);
+      final downloadUrl = await snapshot.ref.getDownloadURL();
 
-        imageUrls.add(downloadUrl);
-      }
+      imageUrls.add(downloadUrl);
+    }
 
-      print('Upload de imagens concluído.');
+    print('Upload de imagens concluído.');
 
-      String description = _descriptionController.text;
-      String location = _locationController.text;
-      String price = _priceController.text;
-      String title = _titleController.text;
+    String description = _descriptionController.text;
+    String location = _locationController.text;
+    String price = _priceController.text;
+    String title = _titleController.text;
 
-      final data = {
-        'bathRooms': _selectedBathrooms,
-        'bedRooms': _selectedBedrooms,
-        'description': description,
-        'livingRooms': _selectedLivingRooms,
-        'kitchens': _selectedKitchens,
-        'location': location,
-        'price': price,
-        'title': title,
-        'userId': FirebaseAuth.instance.currentUser!.uid,
-        'imageUrls': imageUrls,
-      };
+    // Validando se os campos obrigatórios não estão vazios
+    if (title.isEmpty || location.isEmpty || price.isEmpty) {
+      throw 'Preencha todos os campos obrigatórios.';
+    }
 
-      if (widget.propertyId == null) {
-        await _firestore.collection('properties').add(data);
-      } else {
-        await _firestore
-            .collection('properties')
-            .doc(widget.propertyId)
-            .update(data);
-      }
+    final data = {
+      'bathRooms': _selectedBathrooms ?? '0',
+      'bedRooms': _selectedBedrooms ?? '0',
+      'description': description,
+      'livingRooms': _selectedLivingRooms ?? '0',
+      'kitchens': _selectedKitchens ?? '0',
+      'location': location,
+      'price': price,
+      'title': title,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+      'imageUrls': imageUrls,
+    };
 
-      print('Anúncio enviado com sucesso.');
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      print('Erro ao enviar anúncio: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao enviar anúncio: $e'),
-          ),
-        );
-      }
+    if (widget.propertyId == null) {
+      await _firestore.collection('properties').add(data);
+    } else {
+      await _firestore
+          .collection('properties')
+          .doc(widget.propertyId)
+          .update(data);
+    }
+
+    print('Anúncio enviado com sucesso.');
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  } catch (e) {
+    print('Erro ao enviar anúncio: $e');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao enviar anúncio: $e'),
+        ),
+      );
     }
   }
+}
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);

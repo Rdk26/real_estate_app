@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'chat_page.dart'; // Importar a ChatPage para a navegação
 
 class PropertyDetailsPage extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -18,6 +19,19 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void navigateToChat() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          name: "Radek Buanali", // Nome do proprietário
+          image: "https://avatars.githubusercontent.com/u/86506519?v=4", // Imagem do proprietário
+          initialMessage: "Estou interessado em alugar...",
+        ),
+      ),
+    );
   }
 
   @override
@@ -151,7 +165,7 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.data["title"] ?? "Nome não disponível",
+                              widget.data["name"] ?? "Nome não disponível",
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -276,9 +290,7 @@ class PropertyDetailsPageState extends State<PropertyDetailsPage> {
                               children: [
                                 Expanded(
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      // Lógica para marcar visita
-                                    },
+                                    onPressed: navigateToChat,
                                     child: const Text("Marcar visita"),
                                   ),
                                 ),

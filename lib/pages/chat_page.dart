@@ -6,8 +6,14 @@ import 'package:real_estate_app/widgets/full_screen_image.dart';
 class ChatPage extends StatefulWidget {
   final String name;
   final String image;
+  final String initialMessage; // Adicionar este campo para a mensagem inicial
 
-  const ChatPage({super.key, required this.name, required this.image});
+  const ChatPage({
+    super.key,
+    required this.name,
+    required this.image,
+    this.initialMessage = '', // Valor padrão para evitar null
+  });
 
   @override
   ChatPageState createState() => ChatPageState();
@@ -23,10 +29,23 @@ class ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _initializeRecorder();
+    if (widget.initialMessage.isNotEmpty) {
+      addInitialMessage(widget.initialMessage);
+    }
   }
 
   Future<void> _initializeRecorder() async {
     await _recorder.openAudioSession();
+  }
+
+  void addInitialMessage(String message) {
+    setState(() {
+      messages.add({
+        "text": message,
+        "sender": "me",
+        "timestamp": DateTime.now(),
+      });
+    });
   }
 
   void sendMessage() {
@@ -182,7 +201,7 @@ class ChatPageState extends State<ChatPage> {
                   child: TextField(
                     controller: messageController,
                     decoration: InputDecoration(
-                      hintText: "Digite sua mensagem...",
+                      hintText: 'Digite sua mensagem...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

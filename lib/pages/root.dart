@@ -6,6 +6,7 @@ import 'package:real_estate_app/widgets/bottombar_item.dart';
 import 'home.dart';
 import 'favorites_page.dart';
 import 'conversations_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RootApp extends StatefulWidget {
   final VoidCallback onToggleTheme;
@@ -18,33 +19,49 @@ class RootApp extends StatefulWidget {
 
 class RootAppState extends State<RootApp> {
   int _activeTab = 0;
-  final List _barItems = [
-    {
-      "icon": Icons.home_outlined,
-      "active_icon": Icons.home_rounded,
-      "page": const HomePage(),
-    },
-    {
-      "icon": Icons.search_outlined,
-      "active_icon": Icons.search,
-      "page": const ExplorePage(),
-    },
-    {
-      "icon": Icons.favorite_border,
-      "active_icon": Icons.favorite_outlined,
-      "page": const FavoritesPage(),
-    },
-    {
-      "icon": Icons.forum_outlined,
-      "active_icon": Icons.forum_rounded,
-      "page": const ConversationsPage(),
-    },
-    {
-      "icon": Icons.settings_outlined,
-      "active_icon": Icons.settings_rounded,
-      "page": const SettingsPage(),
-    },
-  ];
+  User? _currentUser;
+  List<Map<String, dynamic>> _barItems = [];
+  
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = _auth.currentUser;
+    _initializeBarItems();
+  }
+
+  void _initializeBarItems() {
+    setState(() {
+      _barItems = [
+        {
+          "icon": Icons.home_outlined,
+          "active_icon": Icons.home_rounded,
+          "page": HomePage(userName: _currentUser?.displayName ?? 'Usuário'), // Passando o userName aqui
+        },
+        {
+          "icon": Icons.search_outlined,
+          "active_icon": Icons.search,
+          "page": const ExplorePage(),
+        },
+        {
+          "icon": Icons.favorite_border,
+          "active_icon": Icons.favorite_outlined,
+          "page": const FavoritesPage(),
+        },
+        {
+          "icon": Icons.forum_outlined,
+          "active_icon": Icons.forum_rounded,
+          "page": const ConversationsPage(),
+        },
+        {
+          "icon": Icons.settings_outlined,
+          "active_icon": Icons.settings_rounded,
+          "page": const SettingsPage(),
+        },
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +69,7 @@ class RootAppState extends State<RootApp> {
       backgroundColor: AppColor.appBgColor,
       body: _buildPage(),
       floatingActionButton: _buildBottomBar(),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
     );
   }
 

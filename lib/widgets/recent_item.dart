@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:real_estate_app/theme/color.dart';
-
 import 'custom_image.dart';
 
 class RecentItem extends StatelessWidget {
@@ -27,7 +26,7 @@ class RecentItem extends StatelessWidget {
       child: Row(
         children: [
           CustomImage(
-            data["image"],
+            data["image"] ?? 'https://via.placeholder.com/150',
             radius: 20,
           ),
           const SizedBox(
@@ -46,7 +45,7 @@ class RecentItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          data["name"],
+          data["name"] ?? 'Sem título',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -66,7 +65,7 @@ class RecentItem extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                data["location"],
+                data["location"] ?? 'Sem localização',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -80,7 +79,7 @@ class RecentItem extends StatelessWidget {
           height: 5,
         ),
         Text(
-          data["price"],
+          data["price"] ?? 'Sem preço',
           style: const TextStyle(
             fontSize: 13,
             color: AppColor.primary,
